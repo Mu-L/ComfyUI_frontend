@@ -172,11 +172,7 @@ export const useLoad3dViewer = (node: LGraphNode) => {
       const cameraConfig = node.properties['Camera Config'] as any
       const lightConfig = node.properties['Light Config'] as any
 
-      const widthWidget = node.widgets?.find((w) => w.name === 'width')
-      const heightWidget = node.widgets?.find((w) => w.name === 'height')
-      if (!(widthWidget && heightWidget)) {
-        isPreview.value = true
-      }
+      isPreview.value = node.type === 'Preview3D'
 
       if (sceneConfig) {
         backgroundColor.value =
