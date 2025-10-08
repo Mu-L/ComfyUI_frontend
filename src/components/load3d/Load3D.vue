@@ -63,7 +63,8 @@
 </template>
 
 <script setup lang="ts">
-import { type Ref, computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import type { Ref } from 'vue'
 
 import Load3DControls from '@/components/load3d/Load3DControls.vue'
 import Load3DScene from '@/components/load3d/Load3DScene.vue'

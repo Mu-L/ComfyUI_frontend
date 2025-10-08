@@ -1,4 +1,5 @@
-import { type Ref, nextTick, ref, toRaw, watch } from 'vue'
+import { nextTick, ref, toRaw, watch } from 'vue'
+import type { Ref } from 'vue'
 
 import Load3d from '@/extensions/core/load3d/Load3d'
 import Load3dUtils from '@/extensions/core/load3d/Load3dUtils'
