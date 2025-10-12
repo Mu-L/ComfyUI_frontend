@@ -16,9 +16,8 @@ interface NumberControlOptions {
   min?: number
   max?: number
   step?: number
+  onChange?: (value: number) => void
 }
-
-export { executeNumberControls } from '../services/NumberControlRegistry'
 
 export function useNumberControl(
   modelValue: Ref<number>,
@@ -29,28 +28,34 @@ export function useNumberControl(
   const globalSeedStore = useGlobalSeedStore()
 
   const applyControl = () => {
-    const { min = 0, max = 1000000, step = 1 } = options
+    const { min = 0, max = 1000000, step = 1, onChange } = options
 
+    let newValue: number
     switch (controlMode.value) {
       case NumberControlMode.FIXED:
         // Do nothing - keep current value
-        break
+        return
       case NumberControlMode.INCREMENT:
-        modelValue.value = Math.min(max, modelValue.value + step)
+        newValue = Math.min(max, modelValue.value + step)
         break
       case NumberControlMode.DECREMENT:
-        modelValue.value = Math.max(min, modelValue.value - step)
+        newValue = Math.max(min, modelValue.value - step)
         break
       case NumberControlMode.RANDOMIZE:
-        modelValue.value = Math.floor(Math.random() * (max - min + 1)) + min
+        newValue = Math.floor(Math.random() * (max - min + 1)) + min
         break
       case NumberControlMode.LINK_TO_GLOBAL:
         // Use global seed value, constrained by min/max
-        modelValue.value = Math.max(
-          min,
-          Math.min(max, globalSeedStore.globalSeed)
-        )
+        newValue = Math.max(min, Math.min(max, globalSeedStore.globalSeed))
         break
+      default:
+        return
+    }
+
+    if (onChange) {
+      onChange(newValue)
+    } else {
+      modelValue.value = newValue
     }
   }
 

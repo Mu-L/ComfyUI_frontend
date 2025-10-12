@@ -216,4 +216,50 @@ describe('useNumberControl', () => {
       expect(modelValue.value).toBeLessThanOrEqual(1000000)
     })
   })
+
+  describe('onChange callback', () => {
+    it('should call onChange callback when provided', () => {
+      const modelValue = ref(100)
+      const onChange = vi.fn()
+      const options = { min: 0, max: 1000, step: 1, onChange }
+
+      const { controlMode, applyControl } = useNumberControl(
+        modelValue,
+        options
+      )
+      controlMode.value = NumberControlMode.INCREMENT
+
+      applyControl()
+
+      expect(onChange).toHaveBeenCalledWith(101)
+    })
+
+    it('should fallback to direct assignment when onChange not provided', () => {
+      const modelValue = ref(100)
+      const options = { min: 0, max: 1000, step: 1 } // No onChange
+
+      const { controlMode, applyControl } = useNumberControl(
+        modelValue,
+        options
+      )
+      controlMode.value = NumberControlMode.INCREMENT
+
+      applyControl()
+
+      expect(modelValue.value).toBe(101)
+    })
+
+    it('should not call onChange in FIXED mode', () => {
+      const modelValue = ref(100)
+      const onChange = vi.fn()
+      const options = { min: 0, max: 1000, step: 1, onChange }
+
+      const { applyControl } = useNumberControl(modelValue, options)
+      // controlMode remains FIXED by default
+
+      applyControl()
+
+      expect(onChange).not.toHaveBeenCalled()
+    })
+  })
 })

@@ -8,15 +8,8 @@ import { useSettingStore } from '@/platform/settings/settingStore'
 
 import { NumberControlMode } from '../composables/useNumberControl'
 
-type ControlSettings = {
-  linkToGlobal: boolean
-  randomize: boolean
-  increment: boolean
-  decrement: boolean
-}
-
 type ControlOption = {
-  key: keyof ControlSettings
+  mode: NumberControlMode
   icon?: string
   title: string
   description: string
@@ -33,25 +26,25 @@ defineExpose({ toggle })
 
 const controlOptions: ControlOption[] = [
   {
-    key: 'linkToGlobal',
+    mode: NumberControlMode.LINK_TO_GLOBAL,
     icon: 'pi pi-link',
     title: 'linkToGlobal',
     description: 'linkToGlobalDesc'
   },
   {
-    key: 'randomize',
+    mode: NumberControlMode.RANDOMIZE,
     icon: 'icon-[lucide--shuffle]',
     title: 'randomize',
     description: 'randomizeDesc'
   },
   {
-    key: 'increment',
+    mode: NumberControlMode.INCREMENT,
     text: '+1',
     title: 'increment',
     description: 'incrementDesc'
   },
   {
-    key: 'decrement',
+    mode: NumberControlMode.DECREMENT,
     text: '-1',
     title: 'decrement',
     description: 'decrementDesc'
@@ -70,16 +63,13 @@ const emit = defineEmits<{
   'update:controlMode': [mode: NumberControlMode]
 }>()
 
-const handleToggle = (key: keyof ControlSettings) => {
-  const newMode =
-    props.controlMode === key
-      ? NumberControlMode.FIXED
-      : (key as NumberControlMode)
+const handleToggle = (mode: NumberControlMode) => {
+  const newMode = props.controlMode === mode ? NumberControlMode.FIXED : mode
   emit('update:controlMode', newMode)
 }
 
-const isActive = (key: keyof ControlSettings) => {
-  return props.controlMode === key
+const isActive = (mode: NumberControlMode) => {
+  return props.controlMode === mode
 }
 </script>
 
@@ -101,7 +91,7 @@ const isActive = (key: keyof ControlSettings) => {
       <div class="space-y-2">
         <div
           v-for="option in controlOptions"
-          :key="option.key"
+          :key="option.mode"
           class="flex items-center justify-between p-2 rounded"
         >
           <div class="flex gap-3 flex-1">
@@ -115,7 +105,7 @@ const isActive = (key: keyof ControlSettings) => {
             </div>
             <div class="min-w-0 flex-1">
               <div class="text-sm font-normal">
-                <span v-if="option.key === 'linkToGlobal'">
+                <span v-if="option.mode === NumberControlMode.LINK_TO_GLOBAL">
                   {{ $t('widgets.numberControl.linkToGlobal') }}
                   <em>{{ $t('widgets.numberControl.linkToGlobalSeed') }}</em>
                 </span>
@@ -129,9 +119,9 @@ const isActive = (key: keyof ControlSettings) => {
             </div>
           </div>
           <ToggleSwitch
-            :model-value="isActive(option.key)"
+            :model-value="isActive(option.mode)"
             class="flex-shrink-0"
-            @update:model-value="handleToggle(option.key)"
+            @update:model-value="handleToggle(option.mode)"
           />
         </div>
       </div>

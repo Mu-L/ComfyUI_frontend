@@ -13,10 +13,22 @@ const props = defineProps<{
   readonly?: boolean
 }>()
 
+const emit = defineEmits<{
+  'update:modelValue': [value: number]
+}>()
+
 const modelValue = defineModel<number>({ default: 0 })
 const popover = ref()
 
-const { controlMode } = useNumberControl(modelValue, props.widget.options || {})
+const handleControlChange = (newValue: number) => {
+  modelValue.value = newValue
+  emit('update:modelValue', newValue)
+}
+
+const { controlMode } = useNumberControl(modelValue, {
+  ...props.widget.options,
+  onChange: handleControlChange
+})
 
 const togglePopover = (event: Event) => {
   popover.value.toggle(event)
