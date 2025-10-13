@@ -24,11 +24,14 @@
   --text-xxs: 0.625rem;
   --text-xxs--line-height: calc(1 / 0.625);
 
+  /* Spacing */
+  --spacing-xs: 8px;
+
   /* Font Families */
   --font-inter: 'Inter', sans-serif;
 
   /* Palette Colors */
-  --color-charcoal-100: #55565e;
+  --color-charcoal-100: #171718;
   --color-charcoal-200: #494a50;
   --color-charcoal-300: #3c3d42;
   --color-charcoal-400: #313235;
@@ -155,6 +158,14 @@
   );
   --node-component-widget-skeleton-surface: var(--color-zinc-300);
   --node-stroke: var(--color-stone-100);
+  --interface-panel-surface: var(--color-pure-white);
+  --interface-stroke: var(--color-gray-300);
+  --button-hover-surface: var(--color-gray-200);
+  --button-active-surface: var(--color-gray-400);
+  --node-divider: var(--color-sand-100);
+  --nav-background: var(--color-pure-white);
+  --node-border: var(--color-gray-300);
+  --text-secondary: var(--color-stone-100);
 }
 
 .dark-theme {
@@ -177,6 +188,14 @@
   --node-component-tooltip-surface: var(--color-charcoal-800);
   --node-component-widget-skeleton-surface: var(--color-zinc-800);
   --node-stroke: var(--color-slate-100);
+  --interface-panel-surface: var(--color-charcoal-100);
+  --interface-stroke: var(--color-charcoal-400);
+  --button-hover-surface: var(--color-charcoal-600);
+  --button-active-surface: var(--color-charcoal-600);
+  --node-divider: var(--color-charcoal-500);
+  --nav-background: var(--color-charcoal-100);
+  --node-border: var(--color-charcoal-500);
+  --text-secondary: var(--color-slate-100);
 }
 
 @theme inline {
@@ -214,6 +233,14 @@
     --node-component-widget-skeleton-surface
   );
   --color-node-stroke: var(--node-stroke);
+  --color-interface-panel-surface: var(--interface-panel-surface);
+  --color-interface-stroke: var(--interface-stroke);
+  --color-button-hover-surface: var(--button-hover-surface);
+  --color-button-active-surface: var(--button-active-surface);
+  --color-node-divider: var(--node-divider);
+  --color-nav-background: var(--nav-background);
+  --color-node-border: var(--node-border);
+  --color-text-secondary: var(--text-secondary);
 }
 
 @custom-variant dark-theme {
