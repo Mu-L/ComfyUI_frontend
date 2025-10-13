@@ -16,6 +16,7 @@ interface NumberControlOptions {
   min?: number
   max?: number
   step?: number
+  step2?: number
   onChange?: (value: number) => void
 }
 
@@ -28,7 +29,9 @@ export function useNumberControl(
   const globalSeedStore = useGlobalSeedStore()
 
   const applyControl = () => {
-    const { min = 0, max = 1000000, step = 1, onChange } = options
+    const { min = 0, max = 1000000, step2, step = 1, onChange } = options
+    // Use step2 if available (widget context), otherwise use step as-is (direct API usage)
+    const actualStep = step2 !== undefined ? step2 : step
 
     let newValue: number
     switch (controlMode.value) {
@@ -36,10 +39,10 @@ export function useNumberControl(
         // Do nothing - keep current value
         return
       case NumberControlMode.INCREMENT:
-        newValue = Math.min(max, modelValue.value + step)
+        newValue = Math.min(max, modelValue.value + actualStep)
         break
       case NumberControlMode.DECREMENT:
-        newValue = Math.max(min, modelValue.value - step)
+        newValue = Math.max(min, modelValue.value - actualStep)
         break
       case NumberControlMode.RANDOMIZE:
         newValue = Math.floor(Math.random() * (max - min + 1)) + min

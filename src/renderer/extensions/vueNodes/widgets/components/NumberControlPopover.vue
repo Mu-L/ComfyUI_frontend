@@ -5,6 +5,7 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import { computed, ref } from 'vue'
 
 import { useSettingStore } from '@/platform/settings/settingStore'
+import { useDialogService } from '@/services/dialogService'
 
 import { NumberControlMode } from '../composables/useNumberControl'
 
@@ -18,6 +19,7 @@ type ControlOption = {
 
 const popover = ref()
 const settingStore = useSettingStore()
+const dialogService = useDialogService()
 
 const toggle = (event: Event) => {
   popover.value.toggle(event)
@@ -70,6 +72,11 @@ const handleToggle = (mode: NumberControlMode) => {
 
 const isActive = (mode: NumberControlMode) => {
   return props.controlMode === mode
+}
+
+const handleEditSettings = () => {
+  popover.value.hide()
+  dialogService.showSettingsDialog()
 }
 </script>
 
@@ -128,7 +135,12 @@ const isActive = (mode: NumberControlMode) => {
 
       <hr class="border-charcoal-400 border-1" />
 
-      <Button severity="secondary" size="small" class="w-full">
+      <Button
+        severity="secondary"
+        size="small"
+        class="w-full"
+        @click="handleEditSettings"
+      >
         <i class="pi pi-cog mr-2 text-xs" />
         {{ $t('widgets.numberControl.editSettings') }}
       </Button>
