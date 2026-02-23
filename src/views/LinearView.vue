@@ -43,7 +43,9 @@ const linearWorkflowRef = useTemplateRef('linearWorkflowRef')
 </script>
 <template>
   <div class="absolute w-full h-full">
-    <div class="workflow-tabs-container pointer-events-auto h-9.5 w-full">
+    <div
+      class="workflow-tabs-container pointer-events-auto h-(--workflow-tabs-height) w-full"
+    >
       <div class="flex h-full items-center">
         <WorkflowTabs />
         <TopbarBadges />
@@ -51,7 +53,7 @@ const linearWorkflowRef = useTemplateRef('linearWorkflowRef')
     </div>
     <div
       v-if="mobileDisplay"
-      class="justify-center border-border-subtle border-t overflow-y-scroll h-[calc(100%-38px)] bg-comfy-menu-bg"
+      class="justify-center border-border-subtle border-t overflow-y-scroll h-[calc(100%-var(--workflow-tabs-height))] bg-comfy-menu-bg"
     >
       <MobileMenu />
       <LinearProgressBar class="w-full" />
