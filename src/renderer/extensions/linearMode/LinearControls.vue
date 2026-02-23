@@ -26,7 +26,7 @@ import { useExecutionErrorStore } from '@/stores/executionErrorStore'
 import { useQueueSettingsStore } from '@/stores/queueStore'
 import type { SimplifiedWidget } from '@/types/simplifiedWidget'
 import { cn } from '@/utils/tailwindUtil'
-
+import { useAppModeStore } from '@/stores/appModeStore'
 const { t } = useI18n()
 const commandStore = useCommandStore()
 const executionStore = useExecutionStore()
@@ -35,6 +35,7 @@ const { batchCount } = storeToRefs(useQueueSettingsStore())
 const settingStore = useSettingStore()
 const { isActiveSubscription } = useBillingContext()
 const workflowStore = useWorkflowStore()
+const appModeStore = useAppModeStore()
 
 const props = defineProps<{
   toastTo?: string | HTMLElement
@@ -146,7 +147,10 @@ async function runButtonClick(e: Event) {
 defineExpose({ runButtonClick })
 </script>
 <template>
-  <div class="flex flex-col min-w-80 md:h-full">
+  <div
+    v-if="!appModeStore.isBuilderMode"
+    class="flex flex-col min-w-80 md:h-full"
+  >
     <section
       v-if="mobile"
       data-testid="linear-run-button"
