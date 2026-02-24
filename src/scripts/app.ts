@@ -114,14 +114,18 @@ import { ensureCorrectLayoutScale } from '@/renderer/extensions/vueNodes/layout/
 import {
   extractFilesFromDragEvent,
   hasAudioType,
-  hasImageType
+  hasImageType,
+  hasVideoType,
+  isMediaFile
 } from '@/utils/eventUtils'
 import { getWorkflowDataFromFile } from '@/scripts/metadata/parser'
 import {
   pasteAudioNode,
   pasteAudioNodes,
   pasteImageNode,
-  pasteImageNodes
+  pasteImageNodes,
+  pasteVideoNode,
+  pasteVideoNodes
 } from '@/composables/usePaste'
 
 export const ANIM_PREVIEW_WIDGET = '$$comfy_animation_preview'
@@ -571,7 +575,9 @@ export class ComfyApp {
           workspace.spinner = true
           const imageFiles = files.filter(hasImageType)
           const audioFiles = files.filter(hasAudioType)
-          const totalMedia = imageFiles.length + audioFiles.length
+          const videoFiles = files.filter(hasVideoType)
+          const totalMedia =
+            imageFiles.length + audioFiles.length + videoFiles.length
           const hasMultipleMedia = totalMedia > 1
 
           if (hasMultipleMedia) {
@@ -581,8 +587,10 @@ export class ComfyApp {
             if (audioFiles.length > 0) {
               await this.handleAudioFileList(audioFiles)
             }
-            const handled = new Set([...imageFiles, ...audioFiles])
-            for (const file of files.filter((f) => !handled.has(f))) {
+            if (videoFiles.length > 0) {
+              await this.handleVideoFileList(videoFiles)
+            }
+            for (const file of files.filter((f) => !isMediaFile(f))) {
               await this.handleFile(file, 'file_drop', {
                 deferWarnings: true
               })
@@ -1581,17 +1589,21 @@ export class ComfyApp {
     const { workflow, prompt, parameters, templates } = workflowData ?? {}
 
     if (!(workflow || prompt || parameters || templates)) {
-      if (file.type.startsWith('image')) {
+      const mediaNodeTypes: Record<string, [string, typeof pasteImageNode]> = {
+        image: ['LoadImage', pasteImageNode],
+        audio: ['LoadAudio', pasteAudioNode],
+        video: ['LoadVideo', pasteVideoNode]
+      }
+
+      const mediaType = Object.keys(mediaNodeTypes).find((t) =>
+        file.type.startsWith(t)
+      )
+      if (mediaType) {
+        const [nodeType, pasteFn] = mediaNodeTypes[mediaType]
         const transfer = new DataTransfer()
         transfer.items.add(file)
-        const imageNode = await createNode(this.canvas, 'LoadImage')
-        await pasteImageNode(this.canvas, transfer.items, imageNode)
-        return
-      } else if (file.type.startsWith('audio')) {
-        const transfer = new DataTransfer()
-        transfer.items.add(file)
-        const audioNode = await createNode(this.canvas, 'LoadAudio')
-        await pasteAudioNode(this.canvas, transfer.items, audioNode)
+        const node = await createNode(this.canvas, nodeType)
+        await pasteFn(this.canvas, transfer.items, node)
         return
       }
 
@@ -1701,6 +1713,14 @@ export class ComfyApp {
 
     this.positionNodes(audioNodes)
     this.canvas.selectItems(audioNodes)
+  }
+
+  async handleVideoFileList(fileList: File[]) {
+    const videoNodes = await pasteVideoNodes(this.canvas, fileList)
+    if (videoNodes.length === 0) return
+
+    this.positionNodes(videoNodes)
+    this.canvas.selectItems(videoNodes)
   }
 
   /**
