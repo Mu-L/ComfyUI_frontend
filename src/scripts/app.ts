@@ -89,7 +89,8 @@ import {
   executeWidgetsCallback,
   createNode,
   fixLinkInputSlots,
-  isImageNode
+  isImageNode,
+  isVideoNode
 } from '@/utils/litegraphUtil'
 import {
   createSharedObjectUrl,
@@ -1822,6 +1823,7 @@ export class ComfyApp {
       this.registerNodeDef(nodeId, defs[nodeId])
     }
     // Refresh combo widgets in all nodes including those in subgraphs
+    const nodeOutputStore = useNodeOutputStore()
     forEachNode(this.rootGraph, (node) => {
       const def = defs[node.type]
       // Allow primitive nodes to handle refresh
@@ -1853,6 +1855,12 @@ export class ComfyApp {
             }
           }
         }
+      }
+
+      // Re-trigger previews on media nodes (e.g. LoadImage)
+      // to bust browser cache when files are edited externally
+      if (isImageNode(node) || isVideoNode(node)) {
+        nodeOutputStore.refreshNodeOutputs(node)
       }
     })
 
